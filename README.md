@@ -208,7 +208,7 @@ void loop() {
                 sendOBDRequest(obdPIDs[currentPIDIndex]);
                 currentPIDIndex = (currentPIDIndex + 1) % 3;
 
-                // 🚀 सक्तीने ट्रान्समिट: दर ७ सेकंदाला डेटा डायरेक्ट इंटरनेटवर जाणार!
+                
                 if (livePacket.lat > 1.0) {
                     triggerTransmit(); 
                 } else {
@@ -222,7 +222,7 @@ void loop() {
             break;
         }
     }
-} // 🏆 🌟 हा तो लूपचा मुख्य क्लोजिंग कंस जो सुटला होता!
+}
 
 bool sendNativeHTTP(String payload) {
     if (!sendATCommand("AT+HTTPINIT", "OK", 2000)) {
@@ -277,12 +277,10 @@ void initGPS() {
     sendATCommand("AT+CGNSSPWR=1", "OK", 3000); 
     delay(500);
     
-    // 🌟 सर्व सॅटेलाईट सिस्टीम्स (GPS+GLONASS+Galileo+BDS) एकत्र सुरू करा 
-    // यामुळे इमारतींच्या बाजूला असूनही अचूकता कडक मिळेल!
+
     sendATCommand("AT+CGNSSMODE=15", "OK", 3000); 
     delay(500);
     
-    // 🌟 अचूकता वाढवण्यासाठी मिनिमम NMEA हाय-फिडेलिटी डेटा रेट सेट करा
     sendATCommand("AT+CGNSSCMD=0,1", "OK", 2000);
     delay(500);
     
@@ -322,7 +320,7 @@ void pollGPS() {
         return;
     }
 
-    // 🌟 जादुई आणि बुलेटप्रूफ कॉमा-पार्सर (इंडेक्सचा घोळच मिटवला)
+
     int commaCount = 0;
     String latStr = "";
     String lonStr = "";
@@ -333,11 +331,11 @@ void pollGPS() {
             continue;
         }
         
-        // सिमकोमच्या रिस्पॉन्समध्ये ५ व्या स्वल्पविरामानंतर Latitude सुरू होतो
+    
         if (commaCount == 5) {
             latStr += dataStr[i];
         }
-        // ७ व्या स्वल्पविरामानंतर Longitude सुरू होतो
+    
         if (commaCount == 7) {
             lonStr += dataStr[i];
         }
@@ -376,7 +374,7 @@ void sendOBDRequest(uint8_t pid) {
 
 void readCAN() {
     unsigned long canID = 0; uint8_t ext = 0, dlc = 0, data[8];
-    // 🌟 कॅन रिड फिक्स जोडला (&dlc)
+    (&dlc)
     if (CAN1.readMsgBuf(&canID, &ext, &dlc, data) == CAN_OK) {
         if (canID == 0x7E8 && data[1] == 0x41) { 
             switch (data[2]) { case 0x0C: livePacket.p2 = ((float)(data[3] * 256) + data[4]) / 4.0f; break; case 0x0D: livePacket.p1 = data[3]; break; case 0x05: livePacket.p8 = data[3] - 40; break; } return;
@@ -430,7 +428,7 @@ double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
 String serializePacket(const TelemetryPacket &pkt) {
     String json = "{";
     json += "\"driver_uid\":\"" + String(pkt.driverID) + "\",";
-    json += "\"lat\":" + String(pkt.lat, 6) + ","; // 🏆 🌟 शुद्ध 'lat' केला!
+    json += "\"lat\":" + String(pkt.lat, 6) + ","; // 🏆
     json += "\"lon\":" + String(pkt.lon, 6) + ",";
     json += "\"heading\":" + String(gps_heading, 1) + ",";
     json += "\"speed_kmh\":" + String(pkt.p1, 1) + ","; 
